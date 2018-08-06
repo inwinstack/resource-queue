@@ -14,13 +14,13 @@ import (
 	"github.com/kjelly/resource-queue/worker"
 )
 
-func setRouter(router *mux.Router, kind string, handler httpHandler.Handler) {
-	router.HandleFunc("/"+kind+"/{request_id}", handler.SetPriority).Methods("POST")
-	router.HandleFunc("/"+kind+"/{request_id}", handler.GetJobs).Methods("GET").Queries("uid", "uid")
-	router.HandleFunc("/"+kind+"/", handler.AddJob).Methods("POST")
-	router.HandleFunc("/"+kind+"/", handler.GetJobs).Methods("GET").Queries("owner_id", "owner_id")
-	router.HandleFunc("/"+kind+"/", handler.GetJobs).Methods("GET")
-	router.HandleFunc("/"+kind+"/{request_id}/test", handler.Test).Methods("GET")
+func setRouter(router *mux.Router, handler httpHandler.Handler) {
+	router.HandleFunc("/"+handler.Kind()+"/{request_id}", handler.SetPriority).Methods("POST")
+	router.HandleFunc("/"+handler.Kind()+"/{request_id}", handler.GetJobs).Methods("GET").Queries("uid", "uid")
+	router.HandleFunc("/"+handler.Kind()+"/", handler.AddJob).Methods("POST")
+	router.HandleFunc("/"+handler.Kind()+"/", handler.GetJobs).Methods("GET").Queries("owner_id", "owner_id")
+	router.HandleFunc("/"+handler.Kind()+"/", handler.GetJobs).Methods("GET")
+	router.HandleFunc("/"+handler.Kind()+"/{request_id}/test", handler.Test).Methods("GET")
 }
 
 func main() {
@@ -30,7 +30,7 @@ func main() {
 	go VMWorker.Run()
 
 	router := mux.NewRouter()
-	setRouter(router, "vm", vHandler)
+	setRouter(router, vHandler)
 	srv := &http.Server{Addr: ":8080", Handler: router}
 	go srv.ListenAndServe()
 
