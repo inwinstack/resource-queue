@@ -1,0 +1,38 @@
+http://127.0.0.1:8080
+GET /vm/admin/1/priority/9
+
+http://127.0.0.1:8080
+GET /vm/
+
+http://127.0.0.1:8080
+GET /vm/?owner_id=x&status=queued
+
+http://127.0.0.1:8080
+GET /vm/?owner_id=y
+
+http://127.0.0.1:8080
+GET /vm/
+
+http://127.0.0.1:8080
+GET /vm/1/
+
+http://127.0.0.1:8080
+GET /vm/1/test
+
+http://127.0.0.1:8080
+POST /vm/
+{
+  "request_id": "d",
+  "owner_id": "y",
+  "data": {
+    "VCPU": 1,
+    "Memory": 1,
+    "Disk": 1
+  }
+}
+
+http://127.0.0.1:8080
+POST /vm/a
+{
+  "priority": 83334
+}
