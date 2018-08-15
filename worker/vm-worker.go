@@ -62,6 +62,7 @@ func (v *VMWorker) CheckJob() error {
 func InitVMWorker(q *queue.Queue) *VMWorker {
 	ret := new(VMWorker)
 	ret.q = q
+	ret.name = "VM worker"
 	ret.stopped = false
 	ret.stopChan = make(chan int)
 	ret.SetIntervalt(time.Second)

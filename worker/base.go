@@ -13,6 +13,7 @@ type IWorker interface {
 }
 
 type Worker struct {
+	name     string
 	stopChan chan int
 	stopped  bool
 	running  bool
@@ -38,13 +39,13 @@ func (v *Worker) Stop() error {
 }
 
 func (v *Worker) Run() {
-	log.Debug("Worker is running\n")
+	log.Debugf("Worker, %s, is running\n", v.name)
 	v.running = true
 	for !v.IsStop() {
 		v.execute()
 		time.Sleep(time.Second)
 	}
-	log.Debug("Worker is stopped\n")
+	log.Debugf("Worker, %s, is stopped\n", v.name)
 	v.stopChan <- 1
 }
 
