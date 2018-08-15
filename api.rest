@@ -25,10 +25,16 @@ POST /vm/
   "request_id": "d",
   "owner_id": "y",
   "data": {
-    "VCPU": 1,
-    "Memory": 1,
-    "Disk": 1
-  }
+    "instances": [
+      {
+        "VCPU": 1,
+        "Memory": 1,
+        "Disk": 1
+      }
+    ],
+    "project": "project id"
+  },
+  "callback": "abc"
 }
 
 http://127.0.0.1:8080

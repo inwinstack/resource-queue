@@ -2,7 +2,7 @@
 package worker
 
 import (
-	"fmt"
+	log "github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -15,6 +15,7 @@ type IWorker interface {
 type Worker struct {
 	stopChan chan int
 	stopped  bool
+	running  bool
 	execute  func()
 	interval time.Duration
 }
@@ -29,17 +30,21 @@ func (v *Worker) IsStop() bool {
 
 func (v *Worker) Stop() error {
 	v.stopped = true
-	<-v.stopChan
+	if v.running {
+		<-v.stopChan
+		v.running = false
+	}
 	return nil
 }
 
 func (v *Worker) Run() {
-	fmt.Printf("Worker is running\n")
+	log.Debug("Worker is running\n")
+	v.running = true
 	for !v.IsStop() {
 		v.execute()
 		time.Sleep(time.Second)
 	}
-	fmt.Printf("Worker is stopped\n")
+	log.Debug("Worker is stopped\n")
 	v.stopChan <- 1
 }
 

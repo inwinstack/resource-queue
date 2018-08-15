@@ -12,6 +12,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/kjelly/resource-queue/httpHandler"
 	"github.com/kjelly/resource-queue/worker"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func setRouter(router *mux.Router, handler httpHandler.Handler) {
@@ -24,7 +26,8 @@ func setRouter(router *mux.Router, handler httpHandler.Handler) {
 }
 
 func main() {
-	fmt.Printf("Start\n")
+	log.SetLevel(log.DebugLevel)
+	log.Debug("Start")
 	vHandler := httpHandler.InitVMHandler()
 	VMWorker := worker.InitVMWorker(vHandler.GetQueue())
 	go VMWorker.Run()

@@ -52,7 +52,6 @@ func (v *VMHandler) Check(w http.ResponseWriter, r *http.Request) {
 
 func (v *VMHandler) Test(w http.ResponseWriter, r *http.Request) {
 	jobs := v.q.GetOneJob(v.Kind())
-	fmt.Printf("Test\n")
 	fmt.Fprintf(w, "%v\n", jobs)
 }
 
@@ -94,23 +93,28 @@ func (v *VMHandler) AddJob(w http.ResponseWriter, r *http.Request) {
 
 	decoder, err := jason.NewObjectFromReader(r.Body)
 	if err != nil {
-		fmt.Fprintf(w, "input is not json")
+		fmt.Fprintf(w, "input is not json (%s)", err)
 		return
 	}
 
 	requestID, err := decoder.GetString("request_id")
 	if err != nil {
-		fmt.Fprintf(w, "request_id is not found")
+		fmt.Fprintf(w, "request_id is not found. (%s)", err)
 		return
 	}
 	ownerID, err := decoder.GetString("owner_id")
 	if err != nil {
-		fmt.Fprintf(w, "owner_id is not found")
+		fmt.Fprintf(w, "owner_id is not found. (%s)", err)
 		return
 	}
 	data, err := decoder.GetObject("data")
 	if err != nil {
-		fmt.Fprintf(w, "data is not found")
+		fmt.Fprintf(w, "data is not found. (%s)", err)
+		return
+	}
+	callback, err := decoder.GetString("callback")
+	if err != nil {
+		fmt.Fprintf(w, "callback url is not found.(%s)", err)
 		return
 	}
 
@@ -120,6 +124,7 @@ func (v *VMHandler) AddJob(w http.ResponseWriter, r *http.Request) {
 	j.Type = v.Kind()
 	j.OwnerID = ownerID
 	j.Data = data.String()
+	j.Callback = callback
 
 	v.q.NewJob(&j)
 	fmt.Fprintf(w, "%s %s\n", j, typeID)

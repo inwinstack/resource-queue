@@ -20,7 +20,7 @@ type HypervisorDetail struct {
 }
 
 type HypervisorResource struct {
-	resource []*HypervisorDetail
+	resource map[string]*HypervisorDetail
 	lock     sync.RWMutex
 }
 

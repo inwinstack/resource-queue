@@ -14,6 +14,7 @@ type Job struct {
 	Type      string
 	OwnerID   string
 	Data      string
+	Callback  string
 	Priority  int
 	Status    string
 }
@@ -86,7 +87,7 @@ func (j Job) String() string {
 func Init(engine string, connectionString string) *Queue {
 	queue := new(Queue)
 	db, err := gorm.Open(engine, connectionString)
-	db.LogMode(true)
+	db.LogMode(false)
 	if err != nil {
 		panic("failed to connect database")
 	}
