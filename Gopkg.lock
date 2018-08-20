@@ -53,6 +53,14 @@
   version = "v1.9.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:4323c6f79178c6f811a0528b1b2eba03bad0cae33605636f1e38c8f907b5cbf7"
+  name = "github.com/onrik/logrus"
+  packages = ["filename"]
+  pruneopts = "UT"
+  revision = "ca0a758702be2ae04725ba88dcd27a71949faf33"
+
+[[projects]]
   digest = "1:d867dfa6751c8d7a435821ad3b736310c2ed68945d05b50fb9d23aee0540c8cc"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
@@ -79,6 +87,14 @@
   pruneopts = "UT"
   revision = "4e1fef5609515ec7a2cee7b5de30ba6d9b438cbf"
 
+[[projects]]
+  digest = "1:fe8a03a8222d5b913f256972933d26d24ad7c8286692a42943bc01633cc8fce3"
+  name = "gopkg.in/ini.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "358ee7663966325963d4e8b2e1fbd570c5195153"
+  version = "v1.38.1"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
@@ -87,7 +103,9 @@
     "github.com/gorilla/mux",
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/sqlite",
+    "github.com/onrik/logrus/filename",
     "github.com/sirupsen/logrus",
+    "gopkg.in/ini.v1",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

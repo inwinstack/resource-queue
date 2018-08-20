@@ -25,7 +25,10 @@ type Queue struct {
 
 func (q *Queue) GetJobByRequestID(ID string) *Job {
 	job := new(Job)
-	q.database.First(&job, "request_id = ?", ID)
+	err := q.database.First(&job, "request_id = ?", ID).Error
+	if err != nil {
+		return nil
+	}
 	return job
 }
 
@@ -41,6 +44,10 @@ func (q *Queue) NewJob(job *Job) error {
 	job.Status = "queued"
 	job.Priority = int(time.Now().UnixNano() - 1532584260621743520)
 	return q.database.Create(job).Error
+}
+
+func (q *Queue) DeleteJob(job *Job) error {
+	return q.database.Delete(job).Error
 }
 
 func (q *Queue) Close() error {
