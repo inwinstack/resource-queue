@@ -100,7 +100,7 @@ func (v *VMHandler) UpdateProperty(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "{\"ok\": false, \"error\": \"job not found\"}")
 			return
 		}
-		err = v.q.SetJobpriority(j, priority)
+		err = v.q.SetJobPriority(j, priority)
 		if err != nil {
 			fmt.Fprintf(w, "{\"error\": \"%s\", \"ok\":false }", err)
 			return

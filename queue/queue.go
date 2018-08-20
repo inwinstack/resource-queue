@@ -32,7 +32,7 @@ func (q *Queue) GetJobByRequestID(ID string) *Job {
 	return job
 }
 
-func (q *Queue) SetJobpriority(job *Job, priority int64) error {
+func (q *Queue) SetJobPriority(job *Job, priority int64) error {
 	return q.database.Model(&job).Update("priority", priority).Error
 }
 
