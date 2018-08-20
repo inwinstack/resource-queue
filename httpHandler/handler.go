@@ -53,6 +53,14 @@ func (v *VMHandler) Check(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<h1>%v</h1>", result)
 }
 
+func successResponse(w http.ResponseWriter, body string, extra map[string]string) {
+	fmt.Fprintf(w, "{\"data\": %s, \"ok\": true}", body)
+}
+
+func errorResponse(w http.ResponseWriter, body string, extra map[string]string) {
+	fmt.Fprintf(w, "{\"error\": \"%s\", \"ok\": false}", body)
+}
+
 func (v *VMHandler) Test(w http.ResponseWriter, r *http.Request) {
 	jobs := v.q.GetOneJob(v.Kind())
 	fmt.Fprintf(w, "%v\n", jobs)
@@ -64,23 +72,26 @@ func (v *VMHandler) GetJobs(w http.ResponseWriter, r *http.Request) {
 	status := r.FormValue("status")
 	jobs := v.q.GetJobs(v.Kind(), status, ownerID)
 	b, _ := json.Marshal(&jobs)
-	fmt.Fprintf(w, "{\"jobs\": %s, \"ok\": true}", string(b))
+	successResponse(w, fmt.Sprintf("%s", string(b)), nil)
+
 }
 
 func (v *VMHandler) GetJob(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	job := v.q.GetJobByRequestID(vars["request_id"])
 	if job == nil {
-		fmt.Fprintf(w, "{\"ok\": false}")
+		errorResponse(w, "job not found", nil)
+		return
 	} else {
 		b, err := json.Marshal(job)
 		if err != nil {
 			log.Errorf(`Failed to convert struct to json string.
 				Programming err? (%s)`, err)
-			fmt.Fprintf(w, "{\"ok\": false, \"error\": \"%s\"}", err)
+			errorResponse(w, fmt.Sprintf("%s", err), nil)
 			return
 		}
-		fmt.Fprintf(w, "%s", string(b))
+		successResponse(w, string(b), nil)
+
 	}
 }
 
@@ -90,69 +101,70 @@ func (v *VMHandler) UpdateProperty(w http.ResponseWriter, r *http.Request) {
 
 	decoder, err := jason.NewObjectFromReader(r.Body)
 	if err != nil {
-		fmt.Fprintf(w, "{\"error\": \"%s\", \"ok\":false }", err)
+		errorResponse(w, fmt.Sprintf("%s", err), nil)
 	}
 
 	priority, err := decoder.GetInt64("priority")
 	if err == nil {
 		j := v.q.GetJobByRequestID(requestID)
 		if j == nil {
-			fmt.Fprintf(w, "{\"ok\": false, \"error\": \"job not found\"}")
+			errorResponse(w, fmt.Sprintf("job not found"), nil)
 			return
 		}
 		err = v.q.SetJobPriority(j, priority)
 		if err != nil {
 			fmt.Fprintf(w, "{\"error\": \"%s\", \"ok\":false }", err)
+			errorResponse(w, fmt.Sprintf("%s", err), nil)
 			return
 		}
-		fmt.Fprintf(w, "{\"ok\":true}")
+		successResponse(w, "{}", nil)
 		return
 	}
 	status, err := decoder.GetString("status")
 	if err == nil && status != "" {
 		j := v.q.GetJobByRequestID(requestID)
 		if j == nil {
-			fmt.Fprintf(w, "{\"ok\": false, \"error\": \"job not found\"}")
+			errorResponse(w, fmt.Sprintf("job not found"), nil)
 			return
 		}
 		err = v.q.SetJobStatus(j, status)
 		if err != nil {
-			fmt.Fprintf(w, "{\"error\": \"%s\", \"ok\":false }", err)
+			errorResponse(w, fmt.Sprintf("{\"error\": \"%s\", \"ok\":false }", err), nil)
 			return
 		}
 		fmt.Fprintf(w, "{\"ok\":true}")
 		return
 
 	}
-	fmt.Fprintf(w, "{\"ok\":false, \"error\": \"not support operation\"}")
+	errorResponse(w, fmt.Sprintf("not support operation"), nil)
 
 }
 
 func (v *VMHandler) AddJob(w http.ResponseWriter, r *http.Request) {
 	decoder, err := jason.NewObjectFromReader(r.Body)
 	if err != nil {
-		fmt.Fprintf(w, "{\"error\": \"input data is not json.(%s)\", \"ok\":false }", err)
+		errorResponse(w, fmt.Sprintf("input data is not json.(%s)", err), nil)
 		return
 	}
 
 	requestID, err := decoder.GetString("request_id")
 	if err != nil {
-		fmt.Fprintf(w, "{\"error\": \"request_id is not found(%s)\", \"ok\":false }", err)
+		errorResponse(w, fmt.Sprintf("request_id is not found(%s)", err), nil)
 		return
 	}
 	ownerID, err := decoder.GetString("owner_id")
 	if err != nil {
-		fmt.Fprintf(w, "{\"error\": \"owner_id is not found(%s)\", \"ok\":false }", err)
+		errorResponse(w, fmt.Sprintf("owner_id is not found(%s)", err), nil)
 		return
 	}
 	data, err := decoder.GetObject("data")
 	if err != nil {
-		fmt.Fprintf(w, "{\"error\": \"data is not found(%s)\", \"ok\":false }", err)
+		errorResponse(w, fmt.Sprintf("data is not found(%s)", err), nil)
 		return
 	}
 	callback, err := decoder.GetString("callback")
 	if err != nil {
-		fmt.Fprintf(w, "{\"error\": \"callback url is not found(%s)\", \"ok\":false }", err)
+		errorResponse(w, fmt.Sprintf("callback url is not found(%s)", err), nil)
 		return
 	}
 
@@ -166,7 +178,7 @@ func (v *VMHandler) AddJob(w http.ResponseWriter, r *http.Request) {
 
 	err = v.q.NewJob(&j)
 	if err != nil {
-		fmt.Fprintf(w, "{\"ok\": false, \"error\": \"%s\"}", err)
+		errorResponse(w, fmt.Sprintf("%s", err), nil)
 	}
 	b, _ := json.Marshal(&j)
 	fmt.Fprintf(w, "%s", string(b))
@@ -176,10 +188,10 @@ func (v *VMHandler) DeleteJob(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	job := v.q.GetJobByRequestID(vars["request_id"])
 	if job == nil {
-		fmt.Fprintf(w, "{\"ok\": false, \"error\": \"job not found\"}")
+		errorResponse(w, fmt.Sprintf("job not found"), nil)
 	} else {
 		if job.RequestID == "" {
-			fmt.Fprintf(w, "{\"ok\": false, \"error\": \"job not found\"}")
+			errorResponse(w, fmt.Sprintf("job not found"), nil)
 		} else {
 			v.q.DeleteJob(job)
 			fmt.Fprintf(w, "{\"ok\": true}")
