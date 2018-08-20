@@ -113,7 +113,6 @@ func (v *VMHandler) UpdateProperty(w http.ResponseWriter, r *http.Request) {
 		}
 		err = v.q.SetJobPriority(j, priority)
 		if err != nil {
-			fmt.Fprintf(w, "{\"error\": \"%s\", \"ok\":false }", err)
 			errorResponse(w, fmt.Sprintf("%s", err), nil)
 			return
 		}
@@ -132,7 +131,7 @@ func (v *VMHandler) UpdateProperty(w http.ResponseWriter, r *http.Request) {
 			errorResponse(w, fmt.Sprintf("{\"error\": \"%s\", \"ok\":false }", err), nil)
 			return
 		}
-		fmt.Fprintf(w, "{\"ok\":true}")
+		successResponse(w, "{}", nil)
 		return
 
 	}
@@ -181,7 +180,7 @@ func (v *VMHandler) AddJob(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, fmt.Sprintf("%s", err), nil)
 	}
 	b, _ := json.Marshal(&j)
-	fmt.Fprintf(w, "%s", string(b))
+	successResponse(w, string(b), nil)
 }
 
 func (v *VMHandler) DeleteJob(w http.ResponseWriter, r *http.Request) {
@@ -194,7 +193,7 @@ func (v *VMHandler) DeleteJob(w http.ResponseWriter, r *http.Request) {
 			errorResponse(w, fmt.Sprintf("job not found"), nil)
 		} else {
 			v.q.DeleteJob(job)
-			fmt.Fprintf(w, "{\"ok\": true}")
+			successResponse(w, "{}", nil)
 		}
 	}
 }
