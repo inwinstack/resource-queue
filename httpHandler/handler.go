@@ -23,6 +23,7 @@ type Handler interface {
 	Test(w http.ResponseWriter, r *http.Request)
 	GetQueue() *queue.Queue
 	Kind() string
+	Version() string
 }
 
 type requestBody struct {
@@ -34,6 +35,7 @@ type VMHandler struct {
 	resource hypervisor.HypervisorResource
 	q        *queue.Queue
 	kind     string
+	version  string
 }
 
 func (v *VMHandler) GetQueue() *queue.Queue {
@@ -42,6 +44,10 @@ func (v *VMHandler) GetQueue() *queue.Queue {
 
 func (v *VMHandler) Kind() string {
 	return v.kind
+}
+
+func (v *VMHandler) Version() string {
+	return v.version
 }
 
 func (v *VMHandler) Check(w http.ResponseWriter, r *http.Request) {
@@ -202,6 +208,7 @@ func InitVMHandler(dbType string, uri string) *VMHandler {
 	r := VMHandler{}
 	//r.resource.Update()
 	r.kind = "vm"
+	r.version = "v1"
 	r.q = queue.Init(dbType, uri)
 	return &r
 }

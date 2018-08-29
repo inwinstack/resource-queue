@@ -1,26 +1,20 @@
 http://127.0.0.1:8080
-GET /vm/admin/1/priority/9
+GET /v1/vm/
 
 http://127.0.0.1:8080
-GET /vm/
+GET /v1/vm/?owner_id=x&status=queued
 
 http://127.0.0.1:8080
-GET /vm/?owner_id=x&status=queued
+GET /v1/vm/?owner_id=y
 
 http://127.0.0.1:8080
-GET /vm/?owner_id=y
+GET /v1/vm/
 
 http://127.0.0.1:8080
-GET /vm/
+GET /v1/vm/d
 
 http://127.0.0.1:8080
-GET /vm/1/
-
-http://127.0.0.1:8080
-GET /vm/1/test
-
-http://127.0.0.1:8080
-POST /vm/
+POST /v1/vm/
 {
   "request_id": "d",
   "owner_id": "y",
@@ -30,15 +24,25 @@ POST /vm/
         "VCPU": 1,
         "Memory": 1,
         "Disk": 1
-      }
+       }
     ],
-    "project": "project id"
+    "project": "project id",
+    "host_aggregate": "host1"
   },
   "callback": "abc"
 }
 
 http://127.0.0.1:8080
-POST /vm/a
+POST /v1/vm/a
 {
   "priority": 83334
 }
+
+http://127.0.0.1:8080
+POST /v1/vm/d
+{
+  "status": "running"
+}
+
+http://127.0.0.1:8080
+DELETE /v1/vm/d

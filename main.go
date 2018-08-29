@@ -19,15 +19,15 @@ import (
 )
 
 func setRouter(router *mux.Router, handler httpHandler.Handler) {
-	router.HandleFunc("/"+handler.Kind()+"/{request_id}", handler.UpdateProperty).Methods("POST")
-	router.HandleFunc("/"+handler.Kind()+"/{request_id}", handler.GetJobs).Methods("GET").Queries("owner_id", "owner_id").Queries("status", "status")
-	router.HandleFunc("/"+handler.Kind()+"/{request_id}", handler.GetJobs).Methods("GET").Queries("owner_id", "owner_id")
-	router.HandleFunc("/"+handler.Kind()+"/{request_id}", handler.GetJob).Methods("GET")
-	router.HandleFunc("/"+handler.Kind()+"/{request_id}", handler.DeleteJob).Methods("DELETE")
-	router.HandleFunc("/"+handler.Kind()+"/", handler.AddJob).Methods("POST")
-	router.HandleFunc("/"+handler.Kind()+"/", handler.GetJobs).Methods("GET").Queries("owner_id", "owner_id")
-	router.HandleFunc("/"+handler.Kind()+"/", handler.GetJobs).Methods("GET")
-	router.HandleFunc("/"+handler.Kind()+"/{request_id}/test", handler.Test).Methods("GET")
+	router.HandleFunc("/"+handler.Version()+"/"+handler.Kind()+"/{request_id}", handler.UpdateProperty).Methods("POST")
+	router.HandleFunc("/"+handler.Version()+"/"+handler.Kind()+"/{request_id}", handler.GetJobs).Methods("GET").Queries("owner_id", "owner_id").Queries("status", "status")
+	router.HandleFunc("/"+handler.Version()+"/"+handler.Kind()+"/{request_id}", handler.GetJobs).Methods("GET").Queries("owner_id", "owner_id")
+	router.HandleFunc("/"+handler.Version()+"/"+handler.Kind()+"/{request_id}", handler.GetJob).Methods("GET")
+	router.HandleFunc("/"+handler.Version()+"/"+handler.Kind()+"/{request_id}", handler.DeleteJob).Methods("DELETE")
+	router.HandleFunc("/"+handler.Version()+"/"+handler.Kind()+"/", handler.AddJob).Methods("POST")
+	router.HandleFunc("/"+handler.Version()+"/"+handler.Kind()+"/", handler.GetJobs).Methods("GET").Queries("owner_id", "owner_id")
+	router.HandleFunc("/"+handler.Version()+"/"+handler.Kind()+"/", handler.GetJobs).Methods("GET")
+	router.HandleFunc("/"+handler.Version()+"/"+handler.Kind()+"/{request_id}/test", handler.Test).Methods("GET")
 }
 
 func main() {

@@ -41,13 +41,12 @@ func GetHypervisorDetail(name string) (*HypervisorDetail, error) {
 func GetAllHypervisorDetail(h []Hypervisor) (map[string]*HypervisorDetail, error) {
 	ch := make(chan *HypervisorDetail)
 	var d *HypervisorDetail
-	var err error
 	threadCount := 0
 	for _, v := range h {
 		a := v
 		if a.State == "up" {
 			go func() {
-				d, err = GetHypervisorDetail(a.Name)
+				d, _ = GetHypervisorDetail(a.Name)
 				ch <- d
 			}()
 			threadCount++
